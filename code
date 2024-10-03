@@ -1,0 +1,59 @@
+// Script pour Shopping Brand Google Ads
+// Merci d'avoir telechargé ce script, j'espere qu'il vous sera utile :)
+// Si jamais vous avez besoin d'accompagnement ou d'une expertise Google Ads
+// vous pouvez me contacter via email jeremy@nextmomentum.io
+
+// PARAMETRAGE
+//--------------------------------------------
+
+// Remplacer le nom entre guillemets par le nom de votre campagne 
+var campaignName = "NM_Shopping_Brand";
+
+// Remplacer la liste des termes entre guillemets par le nom de marque et/ou ses variantes (orthographiques, nom de gamme, etc)
+// Vous pouvez ajouter autant de termes que vous le souhaitez mais respectez bien la nomenclature.
+var exclusionTerms = ["Brand1", "Brand2", "Brand3"];
+
+//--------------------------------------------
+// NE RIEN MODIFIER EN DESSOUS
+
+function main() {
+
+  var campaignIterator = AdsApp.shoppingCampaigns()
+    .withCondition("Name = '" + campaignName + "'")
+    .get();
+  
+  if (!campaignIterator.hasNext()) {
+    Logger.log("La campagne spécifiée n'existe pas.");
+    return;
+  }
+
+  var campaign = campaignIterator.next();
+
+  var adGroupIterator = campaign.adGroups().get();
+
+  while (adGroupIterator.hasNext()) {
+    var adGroup = adGroupIterator.next();
+
+    var report = AdsApp.report(
+      "SELECT Query, AdGroupId " +
+      "FROM SEARCH_QUERY_PERFORMANCE_REPORT " +
+      "WHERE AdGroupId = " + adGroup.getId()
+    );
+
+    var rows = report.rows();
+    
+    while (rows.hasNext()) {
+      var row = rows.next();
+      var query = row['Query'];
+
+      var shouldBeExcluded = exclusionTerms.every(function(term) {
+        return query.toLowerCase().indexOf(term.toLowerCase()) === -1;
+      });
+
+      if (shouldBeExcluded) {
+        adGroup.createNegativeKeyword('"' + query + '"');
+        Logger.log("Ajouté comme mot clé négatif dans le groupe d'annonces " + adGroup.getName() + " : " + query);
+      }
+    }
+  }
+}
