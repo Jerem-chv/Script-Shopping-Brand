@@ -18,6 +18,7 @@ var exclusionTerms = ["Brand1", "Brand2", "Brand3"];
 
 function main() {
 
+  // Obtenir la campagne spécifique
   var campaignIterator = AdsApp.shoppingCampaigns()
     .withCondition("Name = '" + campaignName + "'")
     .get();
@@ -29,11 +30,13 @@ function main() {
 
   var campaign = campaignIterator.next();
 
+  // Obtenir tous les groupes d'annonces de la campagne
   var adGroupIterator = campaign.adGroups().get();
 
   while (adGroupIterator.hasNext()) {
     var adGroup = adGroupIterator.next();
 
+    // Obtenir les termes de recherche du groupe d'annonces
     var report = AdsApp.report(
       "SELECT Query, AdGroupId " +
       "FROM SEARCH_QUERY_PERFORMANCE_REPORT " +
@@ -46,13 +49,21 @@ function main() {
       var row = rows.next();
       var query = row['Query'];
 
+      // Vérifier si le terme de recherche ne contient aucun des termes à exclure
       var shouldBeExcluded = exclusionTerms.every(function(term) {
         return query.toLowerCase().indexOf(term.toLowerCase()) === -1;
       });
 
       if (shouldBeExcluded) {
-        adGroup.createNegativeKeyword('"' + query + '"');
-        Logger.log("Ajouté comme mot clé négatif dans le groupe d'annonces " + adGroup.getName() + " : " + query);
+        if (query.split(" ").length === 1) {
+          // Exclure les termes avec un seul mot en exact
+          adGroup.createNegativeKeyword('[' + query + ']');
+          Logger.log("Ajouté comme mot clé négatif exact dans le groupe d'annonces " + adGroup.getName() + " : " + query);
+        } else {
+          // Exclure les termes avec plusieurs mots en expression
+          adGroup.createNegativeKeyword('"' + query + '"');
+          Logger.log("Ajouté comme mot clé négatif en expression dans le groupe d'annonces " + adGroup.getName() + " : " + query);
+        }
       }
     }
   }
