@@ -8,9 +8,11 @@ voici quelques infos à savoir avant de vous lancer :
 Le script fonctionne pour un format shopping standard (non Pmax)
 Pour un resultat optimal, je vous conseille de travailler avec une stratégie d'enchere au target ROAS ou un CPC max faible. Je preconise le target ROAS.
 Parametrez un tROAS élevé (on est sur une campagne qui cible la marque donc avec un taux de conversion élevé).
-Google Limite les exclusions à 10 000 mots clés par adgroup donc segmentez votre shopping intelligemment.
-lorsque vous atteindrez les 10 000 exclusions le script remontera des erreurs de logs. Vous pourrez alors soit l'arreter soit le laisser (pas d'impact).
+Google Limite les exclusions à 20 000 mots clés par adgroup donc segmentez votre shopping intelligemment.
+lorsque vous atteindrez les 20 000 exclusions le script remontera des erreurs de logs. Vous pourrez alors soit l'arreter soit le laisser (pas d'impact).
 Lorsque vous installerez votre script selectionner une frequence en fonction de votre budget sur la campagne (daily or each hour).
+
+Le script exclue les termes en exact si il n'y a qu'un terme dans la recherche sinon il le fait en expression.
  
 Si les resultats ne vous conviennent pas c'est qu'il y a potentiellement votre parametrage à revoir soit dans la segmentation des adgroup, soit dans l'objectif d'optimisation de votre campagne.
 
