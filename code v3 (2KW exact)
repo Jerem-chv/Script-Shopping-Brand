@@ -1,3 +1,21 @@
+// Script pour Shopping Brand Google Ads
+// Merci d'avoir telechargé ce script, j'espere qu'il vous sera utile :)
+// Si jamais vous avez besoin d'accompagnement ou d'une expertise Google Ads
+// vous pouvez me contacter via email jeremy@nextmomentum.io
+
+// PARAMETRAGE
+//--------------------------------------------
+
+// Remplacer le nom entre guillemets par le nom de votre campagne 
+var campaignName = "NM_Shopping_Brand";
+
+// Remplacer la liste des termes entre guillemets par le nom de marque et/ou ses variantes (orthographiques, nom de gamme, etc)
+// Vous pouvez ajouter autant de termes que vous le souhaitez mais respectez bien la nomenclature.
+var exclusionTerms = ["Brand1", "Brand2", "Brand3"];
+
+//--------------------------------------------
+// NE RIEN MODIFIER EN DESSOUS
+
 function main() {
 
   // Obtenir la campagne spécifique
