@@ -1,0 +1,53 @@
+function main() {
+
+  // Obtenir la campagne spécifique
+  var campaignIterator = AdsApp.shoppingCampaigns()
+    .withCondition("Name = '" + campaignName + "'")
+    .get();
+  
+  if (!campaignIterator.hasNext()) {
+    Logger.log("La campagne spécifiée n'existe pas.");
+    return;
+  }
+
+  var campaign = campaignIterator.next();
+
+  // Obtenir tous les groupes d'annonces de la campagne
+  var adGroupIterator = campaign.adGroups().get();
+
+  while (adGroupIterator.hasNext()) {
+    var adGroup = adGroupIterator.next();
+
+    // Obtenir les termes de recherche du groupe d'annonces
+    var report = AdsApp.report(
+      "SELECT Query, AdGroupId " +
+      "FROM SEARCH_QUERY_PERFORMANCE_REPORT " +
+      "WHERE AdGroupId = " + adGroup.getId()
+    );
+
+    var rows = report.rows();
+    
+    while (rows.hasNext()) {
+      var row = rows.next();
+      var query = row['Query'];
+
+      // Vérifier si le terme de recherche ne contient aucun des termes à exclure
+      var shouldBeExcluded = exclusionTerms.every(function(term) {
+        return query.toLowerCase().indexOf(term.toLowerCase()) === -1;
+      });
+
+      if (shouldBeExcluded) {
+        var wordCount = query.split(" ").length;
+        if (wordCount === 1 || wordCount === 2) {
+          // Exclure les termes avec un ou deux mots en exact
+          adGroup.createNegativeKeyword('[' + query + ']');
+          Logger.log("Ajouté comme mot clé négatif exact dans le groupe d'annonces " + adGroup.getName() + " : " + query);
+        } else {
+          // Exclure les termes avec plus de deux mots en expression
+          adGroup.createNegativeKeyword('"' + query + '"');
+          Logger.log("Ajouté comme mot clé négatif en expression dans le groupe d'annonces " + adGroup.getName() + " : " + query);
+        }
+      }
+    }
+  }
+}
